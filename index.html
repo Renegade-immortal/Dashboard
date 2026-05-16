@@ -4,352 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Purchase Dashboard — FY 26-27</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-  :root {
-    --bg: #0b1118;
-    --surface: #111922;
-    --surface2: #18222e;
-    --border: #1f2e3c;
-    --accent: #046A38;
-    --accent2: #0a9e56;
-    --accent3: #34d399;
-    --accent4: #ef6461;
-    --text: #e8edf3;
-    --muted: #6a7b8a;
-    --muted2: #94a3b3;
-    --COK: #f0b847;
-    --CK: #5b9cf5;
-    --CLT: #34d399;
-    --brand: #046A38;
-    --brand-light: #0a9e56;
-    --brand-glow: rgba(4, 106, 56, 0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, sans-serif;
-    font-weight: 400;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* Header */
-  .header {
-    border-bottom: 1px solid var(--border);
-    padding: 32px 40px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    background: linear-gradient(135deg, var(--surface) 0%, #0d1a24 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  .header::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--brand), var(--brand-light), var(--accent3));
-  }
-  .header-left h1 {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.85rem;
-    letter-spacing: -0.5px;
-    color: var(--text);
-    line-height: 1;
-  }
-  .header-left p {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .header-badge {
-    background: var(--brand-glow);
-    border: 1px solid rgba(4, 106, 56, 0.25);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted2);
-    letter-spacing: 0.06em;
-  }
-  .header-badge span {
-    color: var(--accent3);
-  }
-
-  /* Branch Tabs */
-  .tabs {
-    display: flex;
-    gap: 0;
-    padding: 0 40px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .tab {
-    padding: 14px 28px;
-    cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    letter-spacing: 0.02em;
-    position: relative;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--text); }
-  .tab[data-branch="COK"].active { border-color: var(--COK); color: var(--COK); }
-  .tab[data-branch="CK"].active  { border-color: var(--CK);  color: var(--CK);  }
-  .tab[data-branch="CLT"].active { border-color: var(--CLT); color: var(--CLT); }
-  .tab[data-branch="ALL"].active { border-color: var(--accent2); color: var(--accent2); }
-  .tab[data-branch="PVT"].active { border-color: var(--accent4); color: var(--accent4); }
-
-  .dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  .dot-COK { background: var(--COK); }
-  .dot-CK  { background: var(--CK); }
-  .dot-CLT { background: var(--CLT); }
-  .dot-ALL { background: var(--accent2); }
-  .dot-PVT { background: var(--accent4); }
-
-  /* Main layout */
-  .main { padding: 32px 40px; }
-
-  /* Panel visibility */
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* KPI Row */
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 22px 24px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .kpi:hover {
-    transform: translateY(-2px);
-    border-color: rgba(4, 106, 56, 0.3);
-  }
-  .kpi::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .kpi.accent1::before { background: var(--COK); }
-  .kpi.accent2::before { background: var(--CK); }
-  .kpi.accent3::before { background: var(--CLT); }
-  .kpi.accent4::before { background: var(--accent4); }
-  .kpi.accent5::before { background: var(--accent2); }
-  .kpi-label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 10px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .kpi-value {
-    font-size: 1.75rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.5px;
-  }
-  .kpi-value .rupee { font-size: 1.1rem; color: var(--muted2); margin-right: 2px; }
-  .kpi-sub {
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .kpi-sub.good { color: var(--accent3); }
-  .kpi-sub.warn { color: var(--accent4); }
-
-  /* Charts Row */
-  .charts-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: border-color 0.2s ease;
-  }
-  .chart-card:hover {
-    border-color: rgba(4, 106, 56, 0.2);
-  }
-  .chart-title {
-    font-size: 0.72rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 18px;
-  }
-  .chart-wrap {
-    position: relative;
-  }
-
-  /* Supplier bars */
-  .supplier-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .supplier-name {
-    font-size: 0.75rem;
-    color: var(--muted2);
-    width: 160px;
-    flex-shrink: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .bar-outer {
-    flex: 1;
-    background: var(--surface2);
-    border-radius: 2px;
-    height: 6px;
-    position: relative;
-  }
-  .bar-inner {
-    height: 6px;
-    border-radius: 2px;
-    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .supplier-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted2);
-    width: 70px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  /* Bottom row */
-  .bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  /* Payment pill */
-  .payment-pill {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: var(--surface2);
-    border-radius: 8px;
-    margin-bottom: 8px;
-  }
-  .pill-label {
-    font-size: 0.78rem;
-    color: var(--muted2);
-  }
-  .pill-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 500;
-  }
-  .pill-val.paid { color: var(--accent3); }
-  .pill-val.unpaid { color: var(--accent4); }
-
-  /* All branches comparison */
-  .branch-compare {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .branch-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .branch-card h3 {
-    font-size: 0.68rem;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .branch-card.cok h3 { color: var(--COK); }
-  .branch-card.ck  h3 { color: var(--CK); }
-  .branch-card.clt h3 { color: var(--CLT); }
-  .bc-val {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.4rem;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .bc-sub {
-    font-size: 0.7rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* PvtLtd panel */
-  .pvt-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  /* Divider */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 20px 0;
-  }
-
-  /* Footer */
-  .footer {
-    border-top: 1px solid var(--border);
-    padding: 16px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer p {
-    font-size: 0.68rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-</style>
 </head>
 <body>
 
@@ -358,7 +14,11 @@
     <h1>Purchase Details</h1>
     <p>Financial Year 2026–27 &nbsp;·&nbsp; All Branches</p>
   </div>
-  <div class="header-badge">Data Period: <span>Apr 2026 – May 2026</span></div>
+  <div class="header-right">
+    <div class="sync-info"><div class="sync-dot"></div>Synced <span id="syncTime">—</span></div>
+    <button class="btn-refresh" id="btnRefresh">↻ Refresh</button>
+    <div class="header-badge">Live &nbsp;·&nbsp; <span>Google Sheets</span></div>
+  </div>
 </div>
 
 <div class="tabs">
@@ -367,6 +27,28 @@
   <div class="tab" data-branch="CK"><span class="dot dot-CK"></span>CK Branch</div>
   <div class="tab" data-branch="CLT"><span class="dot dot-CLT"></span>CLT Branch</div>
   <div class="tab" data-branch="PVT"><span class="dot dot-PVT"></span>Pvt Ltd Bills</div>
+  <div class="tab" data-branch="LEDGER"><span class="dot dot-LEDGER"></span>Vendor Ledger</div>
+</div>
+
+<div class="filters-bar">
+  <div class="filter-group">
+    <span class="filter-label">From</span>
+    <input type="date" class="filter-input" id="dateFrom"/>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">To</span>
+    <input type="date" class="filter-input" id="dateTo"/>
+  </div>
+  <div class="filter-presets">
+    <button class="preset-btn" data-preset="7d">7 Days</button>
+    <button class="preset-btn" data-preset="month">This Month</button>
+    <button class="preset-btn active" data-preset="all">All Time</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Vendor</span>
+    <select class="filter-select" id="vendorFilter"><option value="">All Vendors</option></select>
+  </div>
+  <button class="btn-clear" id="btnClear">✕ Clear</button>
 </div>
 
 <div class="main">
@@ -376,173 +58,107 @@
     <div class="kpi-row">
       <div class="kpi accent5">
         <div class="kpi-label">Total Purchases (All Branches)</div>
-        <div class="kpi-value"><span class="rupee">₹</span>71.87L</div>
-        <div class="kpi-sub">COK + CK + CLT combined</div>
+        <div class="kpi-value" id="allTotal">—</div>
+        <div class="kpi-sub" id="allTotalSub">Loading...</div>
       </div>
       <div class="kpi accent1">
         <div class="kpi-label">COK Branch</div>
-        <div class="kpi-value"><span class="rupee">₹</span>23.03L</div>
-        <div class="kpi-sub warn">100% Unpaid</div>
+        <div class="kpi-value" id="cokTotal">—</div>
       </div>
       <div class="kpi accent2">
         <div class="kpi-label">CK Branch</div>
-        <div class="kpi-value"><span class="rupee">₹</span>37.47L</div>
-        <div class="kpi-sub">₹4.03L Paid · ₹33.24L Unpaid</div>
+        <div class="kpi-value" id="ckTotal">—</div>
       </div>
       <div class="kpi accent3">
         <div class="kpi-label">CLT Branch</div>
-        <div class="kpi-value"><span class="rupee">₹</span>10.36L</div>
-        <div class="kpi-sub warn">100% Unpaid</div>
+        <div class="kpi-value" id="cltTotal">—</div>
       </div>
     </div>
 
     <div class="branch-compare">
       <div class="branch-card cok">
         <h3>COK Purchase</h3>
-        <div class="bc-val">₹22.89L</div>
-        <div class="bc-sub">Net (after ₹13.7K returns)</div>
+        <div class="bc-val" id="bcCOKVal">—</div>
+        <div class="bc-sub" id="bcCOKRet">Loading...</div>
         <hr class="divider" style="margin:12px 0;">
         <div class="bc-sub" style="margin-bottom:4px;">Top supplier</div>
-        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;">Tender4sure</div>
-        <div class="bc-sub">₹8.52L → 37% of total</div>
+        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;" id="bcCOKTop">—</div>
+        <div class="bc-sub" id="bcCOKTopVal">—</div>
       </div>
       <div class="branch-card ck">
         <h3>CK Purchase</h3>
-        <div class="bc-val">₹37.31L</div>
-        <div class="bc-sub">Net (after ₹15.9K returns)</div>
+        <div class="bc-val" id="bcCKVal">—</div>
+        <div class="bc-sub" id="bcCKRet">Loading...</div>
         <hr class="divider" style="margin:12px 0;">
         <div class="bc-sub" style="margin-bottom:4px;">Top supplier</div>
-        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;">Tender4sure</div>
-        <div class="bc-sub">₹9.44L → 25% of total</div>
+        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;" id="bcCKTop">—</div>
+        <div class="bc-sub" id="bcCKTopVal">—</div>
       </div>
       <div class="branch-card clt">
         <h3>CLT Purchase</h3>
-        <div class="bc-val">₹10.36L</div>
-        <div class="bc-sub">No returns recorded</div>
+        <div class="bc-val" id="bcCLTVal">—</div>
+        <div class="bc-sub" id="bcCLTRet">Loading...</div>
         <hr class="divider" style="margin:12px 0;">
         <div class="bc-sub" style="margin-bottom:4px;">Top supplier</div>
-        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;">Tender 4 Sure</div>
-        <div class="bc-sub">₹3.08L → 30% of total</div>
+        <div style="font-size:0.82rem;color:var(--text);margin-bottom:2px;" id="bcCLTTop">—</div>
+        <div class="bc-sub" id="bcCLTTopVal">—</div>
       </div>
     </div>
 
     <div class="charts-row">
       <div class="chart-card">
         <div class="chart-title">Weekly Purchase Trend — All Branches</div>
-        <div class="chart-wrap"><canvas id="allWeeklyChart" height="200"></canvas></div>
+        <div><canvas id="allWeeklyChart" height="200"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">Branch Share of Total</div>
-        <div class="chart-wrap"><canvas id="allDonutChart" height="200"></canvas></div>
+        <div><canvas id="allDonutChart" height="200"></canvas></div>
       </div>
     </div>
 
     <div class="chart-card">
       <div class="chart-title">Combined Daily Purchase — All Branches</div>
-      <div class="chart-wrap"><canvas id="allDailyChart" height="130"></canvas></div>
+      <div><canvas id="allDailyChart" height="130"></canvas></div>
     </div>
   </div>
 
   <!-- ===== COK ===== -->
   <div class="panel" id="panel-COK">
     <div class="kpi-row">
-      <div class="kpi accent1">
-        <div class="kpi-label">Total Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>23.03L</div>
-        <div class="kpi-sub">994 invoices</div>
-      </div>
-      <div class="kpi accent1">
-        <div class="kpi-label">Net Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>22.89L</div>
-        <div class="kpi-sub good">After ₹13,711 returns</div>
-      </div>
-      <div class="kpi accent1">
-        <div class="kpi-label">Purchase Returns</div>
-        <div class="kpi-value"><span class="rupee">₹</span>13.7K</div>
-        <div class="kpi-sub">0.6% of gross</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Payment Status</div>
-        <div class="kpi-value" style="color:var(--accent4);">100%</div>
-        <div class="kpi-sub warn">All Outstanding</div>
-      </div>
+      <div class="kpi accent1"><div class="kpi-label">Total Purchase</div><div class="kpi-value" id="cokTotal2">—</div><div class="kpi-sub" id="cokTotalSub">—</div></div>
+      <div class="kpi accent1"><div class="kpi-label">Net Purchase</div><div class="kpi-value" id="cokNet">—</div><div class="kpi-sub" id="cokNetSub">—</div></div>
+      <div class="kpi accent1"><div class="kpi-label">Returns / Paid</div><div class="kpi-value" id="cokKpi3">—</div><div class="kpi-sub" id="cokKpi3Sub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Payment Status</div><div class="kpi-value" id="cokKpi4">—</div><div class="kpi-sub" id="cokKpi4Sub">—</div></div>
     </div>
-
     <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-title">Daily Purchase Volume</div>
-        <div class="chart-wrap"><canvas id="cokDailyChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Top Suppliers by Value</div>
-        <div id="cokSuppliers"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Daily Purchase Volume</div><div><canvas id="cokDailyChart" height="200"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Top Suppliers by Value</div><div id="cokSuppliers"></div></div>
     </div>
-
-    <div class="chart-card">
-      <div class="chart-title">Weekly Purchase — COK</div>
-      <div class="chart-wrap"><canvas id="cokWeeklyChart" height="120"></canvas></div>
-    </div>
+    <div class="chart-card"><div class="chart-title">Weekly Purchase — COK</div><div><canvas id="cokWeeklyChart" height="120"></canvas></div></div>
   </div>
 
   <!-- ===== CK ===== -->
   <div class="panel" id="panel-CK">
     <div class="kpi-row">
-      <div class="kpi accent2">
-        <div class="kpi-label">Total Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>37.47L</div>
-        <div class="kpi-sub">3,187 invoices</div>
-      </div>
-      <div class="kpi accent2">
-        <div class="kpi-label">Net Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>37.31L</div>
-        <div class="kpi-sub good">After ₹15,926 returns</div>
-      </div>
-      <div class="kpi accent3">
-        <div class="kpi-label">Amount Paid</div>
-        <div class="kpi-value"><span class="rupee">₹</span>4.03L</div>
-        <div class="kpi-sub good">10.8% settled</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Outstanding</div>
-        <div class="kpi-value"><span class="rupee">₹</span>33.24L</div>
-        <div class="kpi-sub warn">89.2% unpaid</div>
-      </div>
+      <div class="kpi accent2"><div class="kpi-label">Total Purchase</div><div class="kpi-value" id="ckTotal2">—</div><div class="kpi-sub" id="ckTotalSub">—</div></div>
+      <div class="kpi accent2"><div class="kpi-label">Net Purchase</div><div class="kpi-value" id="ckNet">—</div><div class="kpi-sub" id="ckNetSub">—</div></div>
+      <div class="kpi accent3"><div class="kpi-label">Amount Paid</div><div class="kpi-value" id="ckKpi3">—</div><div class="kpi-sub" id="ckKpi3Sub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Outstanding</div><div class="kpi-value" id="ckKpi4">—</div><div class="kpi-sub" id="ckKpi4Sub">—</div></div>
     </div>
-
     <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-title">Daily Purchase Volume</div>
-        <div class="chart-wrap"><canvas id="ckDailyChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Top Suppliers by Value</div>
-        <div id="ckSuppliers"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Daily Purchase Volume</div><div><canvas id="ckDailyChart" height="200"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Top Suppliers by Value</div><div id="ckSuppliers"></div></div>
     </div>
-
     <div class="bottom-row">
-      <div class="chart-card">
-        <div class="chart-title">Weekly Purchase — CK</div>
-        <div class="chart-wrap"><canvas id="ckWeeklyChart" height="180"></canvas></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Weekly Purchase — CK</div><div><canvas id="ckWeeklyChart" height="180"></canvas></div></div>
       <div class="chart-card">
         <div class="chart-title">Payment Status</div>
         <div style="padding-top:8px;">
-          <div class="payment-pill">
-            <span class="pill-label">Paid</span>
-            <span class="pill-val paid">₹4,03,307</span>
-          </div>
-          <div class="payment-pill">
-            <span class="pill-label">Unpaid</span>
-            <span class="pill-val unpaid">₹33,24,209</span>
-          </div>
-          <div class="payment-pill" style="margin-top:16px;background:var(--bg);">
-            <span class="pill-label" style="font-size:0.7rem;">% Cleared</span>
-            <span class="pill-val" style="color:var(--accent);">10.8%</span>
-          </div>
+          <div class="payment-pill"><span class="pill-label">Paid</span><span class="pill-val paid" id="ckPaidVal">—</span></div>
+          <div class="payment-pill"><span class="pill-label">Unpaid</span><span class="pill-val unpaid" id="ckUnpaidVal">—</span></div>
+          <div class="payment-pill" style="margin-top:16px;background:var(--bg);"><span class="pill-label" style="font-size:0.7rem;">% Cleared</span><span class="pill-val" style="color:var(--accent3);" id="ckPctVal">—</span></div>
         </div>
-        <div class="chart-wrap" style="margin-top:16px;"><canvas id="ckPayChart" height="160"></canvas></div>
+        <div style="margin-top:16px;"><canvas id="ckPayChart" height="160"></canvas></div>
       </div>
     </div>
   </div>
@@ -550,327 +166,50 @@
   <!-- ===== CLT ===== -->
   <div class="panel" id="panel-CLT">
     <div class="kpi-row">
-      <div class="kpi accent3">
-        <div class="kpi-label">Total Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>10.36L</div>
-        <div class="kpi-sub">892 invoices</div>
-      </div>
-      <div class="kpi accent3">
-        <div class="kpi-label">Net Purchase</div>
-        <div class="kpi-value"><span class="rupee">₹</span>10.36L</div>
-        <div class="kpi-sub">No returns recorded</div>
-      </div>
-      <div class="kpi accent3">
-        <div class="kpi-label">Avg Daily Spend</div>
-        <div class="kpi-value"><span class="rupee">₹</span>23.5K</div>
-        <div class="kpi-sub">Over 44 active days</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Payment Status</div>
-        <div class="kpi-value" style="color:var(--accent4);">100%</div>
-        <div class="kpi-sub warn">All Outstanding</div>
-      </div>
+      <div class="kpi accent3"><div class="kpi-label">Total Purchase</div><div class="kpi-value" id="cltTotal2">—</div><div class="kpi-sub" id="cltTotalSub">—</div></div>
+      <div class="kpi accent3"><div class="kpi-label">Net Purchase</div><div class="kpi-value" id="cltNet">—</div><div class="kpi-sub" id="cltNetSub">—</div></div>
+      <div class="kpi accent3"><div class="kpi-label">Returns / Paid</div><div class="kpi-value" id="cltKpi3">—</div><div class="kpi-sub" id="cltKpi3Sub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Payment Status</div><div class="kpi-value" id="cltKpi4">—</div><div class="kpi-sub" id="cltKpi4Sub">—</div></div>
     </div>
-
     <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-title">Daily Purchase Volume</div>
-        <div class="chart-wrap"><canvas id="cltDailyChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Top Suppliers by Value</div>
-        <div id="cltSuppliers"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Daily Purchase Volume</div><div><canvas id="cltDailyChart" height="200"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Top Suppliers by Value</div><div id="cltSuppliers"></div></div>
     </div>
-
-    <div class="chart-card">
-      <div class="chart-title">Weekly Purchase — CLT</div>
-      <div class="chart-wrap"><canvas id="cltWeeklyChart" height="120"></canvas></div>
-    </div>
+    <div class="chart-card"><div class="chart-title">Weekly Purchase — CLT</div><div><canvas id="cltWeeklyChart" height="120"></canvas></div></div>
   </div>
 
   <!-- ===== PVT LTD ===== -->
   <div class="panel" id="panel-PVT">
     <div class="kpi-row">
-      <div class="kpi accent4">
-        <div class="kpi-label">Total Bills Raised</div>
-        <div class="kpi-value"><span class="rupee">₹</span>33.94L</div>
-        <div class="kpi-sub">109 invoices (Jan–Feb 2026)</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Amount Paid</div>
-        <div class="kpi-value" style="color:var(--accent3)"><span class="rupee" style="color:var(--muted2)">₹</span>0</div>
-        <div class="kpi-sub warn">₹0 recovered</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Outstanding</div>
-        <div class="kpi-value"><span class="rupee">₹</span>33.94L</div>
-        <div class="kpi-sub warn">100% unpaid</div>
-      </div>
-      <div class="kpi accent4">
-        <div class="kpi-label">Avg per Invoice</div>
-        <div class="kpi-value"><span class="rupee">₹</span>31.1K</div>
-        <div class="kpi-sub">Across 109 bills</div>
-      </div>
+      <div class="kpi accent4"><div class="kpi-label">Total Bills Raised</div><div class="kpi-value" id="pvtTotal">—</div><div class="kpi-sub" id="pvtTotalSub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Amount Paid</div><div class="kpi-value" id="pvtPaid">—</div><div class="kpi-sub" id="pvtPaidSub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Outstanding</div><div class="kpi-value" id="pvtOutstanding">—</div><div class="kpi-sub" id="pvtOutstandingSub">—</div></div>
+      <div class="kpi accent4"><div class="kpi-label">Avg per Invoice</div><div class="kpi-value" id="pvtAvg">—</div><div class="kpi-sub" id="pvtAvgSub">—</div></div>
     </div>
-
     <div class="pvt-grid">
-      <div class="chart-card">
-        <div class="chart-title">Bills by Restaurant</div>
-        <div class="chart-wrap"><canvas id="pvtRestChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Monthly Billing</div>
-        <div class="chart-wrap"><canvas id="pvtMonthChart" height="200"></canvas></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Bills by Restaurant</div><div><canvas id="pvtRestChart" height="200"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Monthly Billing</div><div><canvas id="pvtMonthChart" height="200"></canvas></div></div>
     </div>
-
-    <div class="chart-card">
-      <div class="chart-title">Restaurant Breakdown</div>
-      <div style="padding-top:8px;">
-        <div class="payment-pill">
-          <span class="pill-label">BYND St. Marks Road</span>
-          <span class="pill-val unpaid">₹17,45,635</span>
-        </div>
-        <div class="payment-pill">
-          <span class="pill-label">Beyondburg Inc – Indiranagar</span>
-          <span class="pill-val unpaid">₹16,48,171</span>
-        </div>
-        <div style="padding:14px 16px;background:var(--surface2);border-radius:8px;margin-top:8px;">
-          <div style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">NOTE</div>
-          <div style="font-size:0.78rem;color:var(--muted2);">All Pvt Ltd bills are marked <span style="color:var(--accent4)">Unpaid / Saved</span> status. ₹33.94L in receivables pending clearance as of data export date.</div>
-        </div>
-      </div>
-    </div>
+    <div class="chart-card"><div class="chart-title">Restaurant Breakdown</div><div id="pvtBreakdown" style="padding-top:8px;"></div></div>
   </div>
 
-</div><!-- /main -->
+  <!-- ===== VENDOR LEDGER ===== -->
+  <div class="panel" id="panel-LEDGER">
+    <div class="ledger-controls">
+      <select class="ledger-select" id="ledgerVendor"><option value="">— Select a vendor —</option></select>
+    </div>
+    <div class="ledger-summary" id="ledgerSummary"></div>
+    <div id="ledgerContent"><div class="empty-state"><div class="icon">📋</div><p>Select a vendor to view their ledger</p></div></div>
+  </div>
 
-<div class="footer">
-  <p>Purchase Dashboard — FY 2026–27 &nbsp;·&nbsp; Generated from Purchase_Details_26-27.xlsx</p>
-  <p>Branches: COK · CK · CLT &nbsp;|&nbsp; Pvt Ltd Bills: Jan–Feb 2026</p>
 </div>
 
-<script>
-// ============================================================
-// DATA
-// ============================================================
-const DATA = {
-  COK: {
-    daily: [{"date":"2026-04-01","amount":25958},{"date":"2026-04-02","amount":73282},{"date":"2026-04-03","amount":14092},{"date":"2026-04-04","amount":54648},{"date":"2026-04-05","amount":400},{"date":"2026-04-06","amount":83520},{"date":"2026-04-07","amount":72160},{"date":"2026-04-08","amount":16329},{"date":"2026-04-09","amount":67580},{"date":"2026-04-10","amount":72656},{"date":"2026-04-11","amount":85881},{"date":"2026-04-13","amount":80647},{"date":"2026-04-14","amount":36723},{"date":"2026-04-15","amount":12130},{"date":"2026-04-16","amount":64476},{"date":"2026-04-17","amount":82758},{"date":"2026-04-18","amount":124001},{"date":"2026-04-19","amount":33},{"date":"2026-04-20","amount":99520},{"date":"2026-04-21","amount":37596},{"date":"2026-04-22","amount":46320},{"date":"2026-04-23","amount":55103},{"date":"2026-04-24","amount":61669},{"date":"2026-04-25","amount":42570},{"date":"2026-04-26","amount":3560},{"date":"2026-04-27","amount":84206},{"date":"2026-04-28","amount":111912},{"date":"2026-04-29","amount":30021},{"date":"2026-04-30","amount":47278},{"date":"2026-05-01","amount":52054},{"date":"2026-05-02","amount":100630},{"date":"2026-05-03","amount":4229},{"date":"2026-05-04","amount":71436},{"date":"2026-05-05","amount":49405},{"date":"2026-05-06","amount":52961},{"date":"2026-05-07","amount":63264},{"date":"2026-05-08","amount":67220},{"date":"2026-05-09","amount":114615},{"date":"2026-05-10","amount":1900},{"date":"2026-05-11","amount":75603},{"date":"2026-05-12","amount":18925},{"date":"2026-05-13","amount":43731}],
-    weekly: {"2026-03-30":168380,"2026-04-06":398126,"2026-04-13":400768,"2026-04-20":346338,"2026-04-27":430330,"2026-05-04":420801,"2026-05-11":138259},
-    suppliers: {"Tender4sure":851744,"Thomson Trading Agencies":570380,"Leveza Foods Pvt Ltd":213278,"Lera Marketing Fries":133306,"Green Land Fresh":128807,"EUROINDIA TRADING":99048,"Novy Paper Plastopack":70310,"Pantree Edappaly":39332}
-  },
-  CK: {
-    daily: [{"date":"2026-04-01","amount":83589},{"date":"2026-04-02","amount":30808},{"date":"2026-04-03","amount":20384},{"date":"2026-04-04","amount":114181},{"date":"2026-04-05","amount":22755},{"date":"2026-04-06","amount":221806},{"date":"2026-04-07","amount":19978},{"date":"2026-04-08","amount":30966},{"date":"2026-04-09","amount":98584},{"date":"2026-04-10","amount":120856},{"date":"2026-04-11","amount":99485},{"date":"2026-04-12","amount":46965},{"date":"2026-04-13","amount":61365},{"date":"2026-04-14","amount":27718},{"date":"2026-04-15","amount":123861},{"date":"2026-04-16","amount":64833},{"date":"2026-04-17","amount":95055},{"date":"2026-04-18","amount":93074},{"date":"2026-04-19","amount":127020},{"date":"2026-04-20","amount":91942},{"date":"2026-04-21","amount":26116},{"date":"2026-04-22","amount":69463},{"date":"2026-04-23","amount":57008},{"date":"2026-04-24","amount":197770},{"date":"2026-04-25","amount":58455},{"date":"2026-04-26","amount":45832},{"date":"2026-04-27","amount":113865},{"date":"2026-04-28","amount":87227},{"date":"2026-04-29","amount":54805},{"date":"2026-04-30","amount":209972},{"date":"2026-05-01","amount":133569},{"date":"2026-05-02","amount":138141},{"date":"2026-05-03","amount":4162},{"date":"2026-05-04","amount":153764},{"date":"2026-05-05","amount":41701},{"date":"2026-05-06","amount":168500},{"date":"2026-05-07","amount":20735},{"date":"2026-05-08","amount":95149},{"date":"2026-05-09","amount":57565},{"date":"2026-05-10","amount":22498},{"date":"2026-05-11","amount":87344},{"date":"2026-05-12","amount":164694},{"date":"2026-05-13","amount":105577},{"date":"2026-05-14","amount":38202}],
-    weekly: {"2026-03-30":271717,"2026-04-06":638640,"2026-04-13":592926,"2026-04-20":546586,"2026-04-27":741741,"2026-05-04":559912,"2026-05-11":395817},
-    suppliers: {"Tender4sure":944298,"Aditya Food Service":751139,"AC ENTERPRISES":670327,"Tender Nest Chicken":490994,"Beyondburg Inc - Cochin":230862,"HYPERPURE":198350,"Local Purchase Blr":99633,"Sri Mahalakshmi Super Market":94944}
-  },
-  CLT: {
-    daily: [{"date":"2026-04-01","amount":40761},{"date":"2026-04-02","amount":23943},{"date":"2026-04-03","amount":17441},{"date":"2026-04-04","amount":28615},{"date":"2026-04-05","amount":34959},{"date":"2026-04-06","amount":17176},{"date":"2026-04-07","amount":3938},{"date":"2026-04-08","amount":22660},{"date":"2026-04-09","amount":42134},{"date":"2026-04-10","amount":9711},{"date":"2026-04-11","amount":22222},{"date":"2026-04-12","amount":7925},{"date":"2026-04-13","amount":33938},{"date":"2026-04-14","amount":21540},{"date":"2026-04-15","amount":6587},{"date":"2026-04-16","amount":39779},{"date":"2026-04-17","amount":24871},{"date":"2026-04-18","amount":25207},{"date":"2026-04-19","amount":28021},{"date":"2026-04-20","amount":23629},{"date":"2026-04-21","amount":10615},{"date":"2026-04-22","amount":35945},{"date":"2026-04-23","amount":21122},{"date":"2026-04-24","amount":46105},{"date":"2026-04-25","amount":29877},{"date":"2026-04-26","amount":978},{"date":"2026-04-27","amount":23075},{"date":"2026-04-28","amount":37926},{"date":"2026-04-29","amount":12436},{"date":"2026-04-30","amount":7177},{"date":"2026-05-01","amount":17585},{"date":"2026-05-02","amount":17357},{"date":"2026-05-03","amount":27309},{"date":"2026-05-04","amount":8633},{"date":"2026-05-05","amount":15150},{"date":"2026-05-06","amount":38492},{"date":"2026-05-07","amount":31083},{"date":"2026-05-08","amount":6768},{"date":"2026-05-09","amount":17197},{"date":"2026-05-10","amount":47212},{"date":"2026-05-11","amount":24273},{"date":"2026-05-12","amount":33183},{"date":"2026-05-13","amount":9948},{"date":"2026-05-14","amount":41383}],
-    weekly: {"2026-03-30":145719,"2026-04-06":125765,"2026-04-13":179943,"2026-04-20":168270,"2026-04-27":142864,"2026-05-04":164535,"2026-05-11":108787},
-    suppliers: {"Tender 4 Sure":307837,"Future Foods":226104,"Global Traders":92430,"The Bakester Company":49674,"Leveza Foods":47450,"City Gas Service":42050,"Nk Muhammed Ali & Bros":40039,"Beyondburg Inc - Cochin":37325}
-  }
-};
+<div class="footer">
+  <p>Purchase Dashboard — FY 2026–27 &nbsp;·&nbsp; Live from Google Sheets</p>
+  <p>Branches: COK · CK · CLT &nbsp;|&nbsp; Pvt Ltd Bills</p>
+</div>
 
-// ============================================================
-// CHART DEFAULTS
-// ============================================================
-Chart.defaults.color = '#6a7b8a';
-Chart.defaults.borderColor = '#1f2e3c';
-Chart.defaults.font.family = "'JetBrains Mono', monospace";
-Chart.defaults.font.size = 10;
-
-const fmt = v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v.toFixed(0));
-
-function lineChart(id, labels, datasets, color) {
-  const ctx = document.getElementById(id).getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 220);
-  grad.addColorStop(0, color + '33');
-  grad.addColorStop(1, color + '00');
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: datasets.map((d, i) => ({
-        label: d.label,
-        data: d.data,
-        borderColor: d.color || color,
-        backgroundColor: i === 0 ? grad : 'transparent',
-        borderWidth: 1.8,
-        fill: i === 0,
-        tension: 0.3,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-      }))
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: datasets.length > 1, position: 'top', labels: { boxWidth: 10, padding: 16, font: { size: 10 } } },
-        tooltip: {
-          backgroundColor: '#111922',
-          borderColor: '#1f2e3c',
-          borderWidth: 1,
-          padding: 10,
-          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.parsed.y) }
-        }
-      },
-      scales: {
-        x: { grid: { color: '#1f2e3c20' }, ticks: { maxTicksLimit: 8, maxRotation: 0 } },
-        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
-      }
-    }
-  });
-}
-
-function barChart(id, labels, data, color) {
-  new Chart(document.getElementById(id).getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ data, backgroundColor: color + 'aa', borderColor: color, borderWidth: 1, borderRadius: 3 }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed.y) } } },
-      scales: {
-        x: { grid: { display: false }, ticks: { maxRotation: 0, font: { size: 9 } } },
-        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
-      }
-    }
-  });
-}
-
-function donutChart(id, labels, data, colors) {
-  new Chart(document.getElementById(id).getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels,
-      datasets: [{ data, backgroundColor: colors, borderColor: '#0b1118', borderWidth: 3 }]
-    },
-    options: {
-      responsive: true,
-      cutout: '65%',
-      plugins: {
-        legend: { position: 'bottom', labels: { padding: 16, boxWidth: 10 } },
-        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed) + ' (' + ((ctx.parsed/(data.reduce((a,b)=>a+b,0)))*100).toFixed(1)+'%)' } }
-      }
-    }
-  });
-}
-
-function supplierBars(containerId, suppliers, color) {
-  const el = document.getElementById(containerId);
-  const vals = Object.values(suppliers);
-  const max = Math.max(...vals);
-  el.innerHTML = Object.entries(suppliers).map(([name, val]) => `
-    <div class="supplier-row">
-      <div class="supplier-name" title="${name}">${name}</div>
-      <div class="bar-outer">
-        <div class="bar-inner" style="width:${(val/max*100).toFixed(1)}%;background:${color};"></div>
-      </div>
-      <div class="supplier-val">${fmt(val)}</div>
-    </div>
-  `).join('');
-}
-
-// ============================================================
-// BUILD CHARTS
-// ============================================================
-function buildCharts() {
-  const weeks = Object.keys(DATA.COK.weekly).map(d => d.slice(5));
-
-  // --- ALL overview ---
-  lineChart('allWeeklyChart',
-    weeks,
-    [
-      { label: 'COK', data: Object.values(DATA.COK.weekly), color: '#f0b847' },
-      { label: 'CK',  data: Object.values(DATA.CK.weekly),  color: '#5b9cf5' },
-      { label: 'CLT', data: Object.values(DATA.CLT.weekly), color: '#34d399' },
-    ],
-    '#f0b847'
-  );
-
-  donutChart('allDonutChart',
-    ['COK', 'CK', 'CLT'],
-    [2303002, 3747339, 1035883],
-    ['#f0b847', '#5b9cf5', '#34d399']
-  );
-
-  // Combined daily
-  const allDates = [...new Set([...DATA.COK.daily, ...DATA.CK.daily, ...DATA.CLT.daily].map(d => d.date))].sort();
-  const sum = date => {
-    const c = DATA.COK.daily.find(d=>d.date===date);
-    const k = DATA.CK.daily.find(d=>d.date===date);
-    const l = DATA.CLT.daily.find(d=>d.date===date);
-    return (c?.amount||0) + (k?.amount||0) + (l?.amount||0);
-  };
-  lineChart('allDailyChart', allDates.map(d=>d.slice(5)), [{ label: 'All Branches', data: allDates.map(sum), color: '#0a9e56' }], '#0a9e56');
-
-  // --- COK ---
-  lineChart('cokDailyChart', DATA.COK.daily.map(d=>d.date.slice(5)), [{ label: 'COK Purchase', data: DATA.COK.daily.map(d=>d.amount), color: '#f0b847' }], '#f0b847');
-  barChart('cokWeeklyChart', weeks, Object.values(DATA.COK.weekly), '#f0b847');
-  supplierBars('cokSuppliers', DATA.COK.suppliers, '#f0b847');
-
-  // --- CK ---
-  lineChart('ckDailyChart', DATA.CK.daily.map(d=>d.date.slice(5)), [{ label: 'CK Purchase', data: DATA.CK.daily.map(d=>d.amount), color: '#5b9cf5' }], '#5b9cf5');
-  barChart('ckWeeklyChart', weeks, Object.values(DATA.CK.weekly), '#5b9cf5');
-  supplierBars('ckSuppliers', DATA.CK.suppliers, '#5b9cf5');
-  new Chart(document.getElementById('ckPayChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Paid', 'Unpaid'],
-      datasets: [{ data: [403307, 3324209], backgroundColor: ['#34d399aa', '#ef6461aa'], borderColor: '#0b1118', borderWidth: 3 }]
-    },
-    options: {
-      cutout: '60%',
-      plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12 } },
-        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed) } }
-      }
-    }
-  });
-
-  // --- CLT ---
-  lineChart('cltDailyChart', DATA.CLT.daily.map(d=>d.date.slice(5)), [{ label: 'CLT Purchase', data: DATA.CLT.daily.map(d=>d.amount), color: '#34d399' }], '#34d399');
-  barChart('cltWeeklyChart', weeks, Object.values(DATA.CLT.weekly), '#34d399');
-  supplierBars('cltSuppliers', DATA.CLT.suppliers, '#34d399');
-
-  // --- PvtLtd ---
-  new Chart(document.getElementById('pvtRestChart').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['BYND St. Marks Rd', 'Beyondburg – Indiranagar'],
-      datasets: [{ data: [1745635, 1648171], backgroundColor: ['#ef646188','#f0b84788'], borderColor: ['#ef6461','#f0b847'], borderWidth: 1, borderRadius: 4 }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed.y) } } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
-      }
-    }
-  });
-  barChart('pvtMonthChart', ['Jan 2026', 'Feb 2026'], [1866067, 1527739], '#ef6461');
-}
-
-// ============================================================
-// TAB SWITCHING
-// ============================================================
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('panel-' + tab.dataset.branch).classList.add('active');
-  });
-});
-
-// Build after fonts load
-document.fonts.ready.then(buildCharts);
-</script>
+<script src="data.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
