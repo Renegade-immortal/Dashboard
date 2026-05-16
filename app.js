@@ -136,14 +136,10 @@ function renderAll() {
 
 function renderFilters() {
   const vendorSelect = document.getElementById('vendorFilter');
-  const ledgerSelect = document.getElementById('ledgerVendor');
   const cur = STATE.filters.vendor;
   const opts = '<option value="">All Vendors</option>' +
     STATE.vendors.map(v=>`<option value="${v}" ${v===cur?'selected':''}>${v}</option>`).join('');
-  const ledgerOpts = '<option value="">— Select a vendor —</option>' +
-    STATE.vendors.map(v=>`<option value="${v}" ${v===cur?'selected':''}>${v}</option>`).join('');
   if(vendorSelect) vendorSelect.innerHTML = opts;
-  if(ledgerSelect) ledgerSelect.innerHTML = ledgerOpts;
 }
 
 function renderOverview() {
@@ -294,20 +290,22 @@ function openVendorLedger(vendor) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelector('[data-branch="LEDGER"]').classList.add('active');
   document.getElementById('panel-LEDGER').classList.add('active');
-  document.getElementById('ledgerVendor').value = vendor;
   renderAll();
 }
 
 function renderLedger() {
-  const vendor = document.getElementById('ledgerVendor')?.value || '';
+  const vendor = STATE.filters.vendor;
+  const outlet = document.getElementById('ledgerOutlet')?.value || '';
   if(!vendor) {
-    document.getElementById('ledgerContent').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>Select a vendor to view their ledger</p></div>';
+    document.getElementById('ledgerContent').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>Select a vendor from the filter bar to view their ledger</p></div>';
+    document.getElementById('ledgerSummary').innerHTML = '';
     return;
   }
 
-  // Gather all transactions for this vendor across branches
+  // Gather all transactions for this vendor, filtered by outlet if selected
   let txns = [];
-  ['COK','CK','CLT'].forEach(branch => {
+  const branches = outlet ? [outlet] : ['COK','CK','CLT'];
+  branches.forEach(branch => {
     STATE.filtered[branch].filter(r=>r.vendor===vendor).forEach(r=>{
       txns.push({...r, branch});
     });
@@ -396,8 +394,8 @@ function initEvents() {
   // Vendor filter
   document.getElementById('vendorFilter')?.addEventListener('change', e => { STATE.filters.vendor=e.target.value; applyFilters(); renderAll(); });
 
-  // Ledger vendor select
-  document.getElementById('ledgerVendor')?.addEventListener('change', e => { renderLedger(); });
+  // Ledger outlet select
+  document.getElementById('ledgerOutlet')?.addEventListener('change', e => { renderLedger(); });
 
   // Presets
   document.querySelectorAll('.preset-btn').forEach(btn => {
