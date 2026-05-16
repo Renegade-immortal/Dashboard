@@ -4,24 +4,27 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Purchase Dashboard — FY 26-27</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #13161d;
-    --surface2: #1a1e28;
-    --border: #232738;
-    --accent: #e8c96d;
-    --accent2: #5b8cff;
-    --accent3: #4ecfa8;
-    --accent4: #ff6b6b;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --muted2: #9ca3af;
-    --COK: #e8c96d;
-    --CK: #5b8cff;
-    --CLT: #4ecfa8;
+    --bg: #0b1118;
+    --surface: #111922;
+    --surface2: #18222e;
+    --border: #1f2e3c;
+    --accent: #046A38;
+    --accent2: #0a9e56;
+    --accent3: #34d399;
+    --accent4: #ef6461;
+    --text: #e8edf3;
+    --muted: #6a7b8a;
+    --muted2: #94a3b3;
+    --COK: #f0b847;
+    --CK: #5b9cf5;
+    --CLT: #34d399;
+    --brand: #046A38;
+    --brand-light: #0a9e56;
+    --brand-glow: rgba(4, 106, 56, 0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,47 +32,58 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-weight: 400;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Header */
   .header {
     border-bottom: 1px solid var(--border);
-    padding: 28px 40px 24px;
+    padding: 32px 40px 28px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    background: var(--surface);
+    background: linear-gradient(135deg, var(--surface) 0%, #0d1a24 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--brand-light), var(--accent3));
   }
   .header-left h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.85rem;
     letter-spacing: -0.5px;
     color: var(--text);
     line-height: 1;
   }
   .header-left p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--muted);
-    margin-top: 6px;
-    font-family: 'DM Mono', monospace;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   .header-badge {
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    background: var(--brand-glow);
+    border: 1px solid rgba(4, 106, 56, 0.25);
     padding: 8px 16px;
     border-radius: 6px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--muted2);
     letter-spacing: 0.06em;
   }
   .header-badge span {
-    color: var(--accent);
+    color: var(--accent3);
   }
 
   /* Branch Tabs */
@@ -129,10 +143,15 @@
   .kpi {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 22px 24px;
     position: relative;
     overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .kpi:hover {
+    transform: translateY(-2px);
+    border-color: rgba(4, 106, 56, 0.3);
   }
   .kpi::before {
     content: '';
@@ -151,11 +170,12 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 10px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
   }
   .kpi-value {
     font-size: 1.75rem;
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
     color: var(--text);
     letter-spacing: -0.5px;
   }
@@ -164,7 +184,7 @@
     font-size: 0.72rem;
     color: var(--muted);
     margin-top: 6px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
   }
   .kpi-sub.good { color: var(--accent3); }
   .kpi-sub.warn { color: var(--accent4); }
@@ -179,15 +199,19 @@
   .chart-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 24px;
+    transition: border-color 0.2s ease;
+  }
+  .chart-card:hover {
+    border-color: rgba(4, 106, 56, 0.2);
   }
   .chart-title {
     font-size: 0.72rem;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     margin-bottom: 18px;
   }
   .chart-wrap {
@@ -223,7 +247,7 @@
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .supplier-val {
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--muted2);
     width: 70px;
@@ -253,7 +277,7 @@
     color: var(--muted2);
   }
   .pill-val {
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.82rem;
     font-weight: 500;
   }
@@ -275,7 +299,7 @@
   }
   .branch-card h3 {
     font-size: 0.68rem;
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 14px;
@@ -284,7 +308,8 @@
   .branch-card.ck  h3 { color: var(--CK); }
   .branch-card.clt h3 { color: var(--CLT); }
   .bc-val {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
     font-size: 1.4rem;
     color: var(--text);
     margin-bottom: 4px;
@@ -292,7 +317,7 @@
   .bc-sub {
     font-size: 0.7rem;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   /* PvtLtd panel */
@@ -321,7 +346,7 @@
   .footer p {
     font-size: 0.68rem;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.05em;
   }
 </style>
@@ -612,7 +637,7 @@
           <span class="pill-val unpaid">₹16,48,171</span>
         </div>
         <div style="padding:14px 16px;background:var(--surface2);border-radius:8px;margin-top:8px;">
-          <div style="font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">NOTE</div>
+          <div style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">NOTE</div>
           <div style="font-size:0.78rem;color:var(--muted2);">All Pvt Ltd bills are marked <span style="color:var(--accent4)">Unpaid / Saved</span> status. ₹33.94L in receivables pending clearance as of data export date.</div>
         </div>
       </div>
@@ -651,9 +676,9 @@ const DATA = {
 // ============================================================
 // CHART DEFAULTS
 // ============================================================
-Chart.defaults.color = '#6b7280';
-Chart.defaults.borderColor = '#232738';
-Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.color = '#6a7b8a';
+Chart.defaults.borderColor = '#1f2e3c';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
 Chart.defaults.font.size = 10;
 
 const fmt = v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v.toFixed(0));
@@ -685,16 +710,16 @@ function lineChart(id, labels, datasets, color) {
       plugins: {
         legend: { display: datasets.length > 1, position: 'top', labels: { boxWidth: 10, padding: 16, font: { size: 10 } } },
         tooltip: {
-          backgroundColor: '#13161d',
-          borderColor: '#232738',
+          backgroundColor: '#111922',
+          borderColor: '#1f2e3c',
           borderWidth: 1,
           padding: 10,
           callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.parsed.y) }
         }
       },
       scales: {
-        x: { grid: { color: '#23273820' }, ticks: { maxTicksLimit: 8, maxRotation: 0 } },
-        y: { grid: { color: '#23273840' }, ticks: { callback: fmt } }
+        x: { grid: { color: '#1f2e3c20' }, ticks: { maxTicksLimit: 8, maxRotation: 0 } },
+        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
       }
     }
   });
@@ -712,7 +737,7 @@ function barChart(id, labels, data, color) {
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed.y) } } },
       scales: {
         x: { grid: { display: false }, ticks: { maxRotation: 0, font: { size: 9 } } },
-        y: { grid: { color: '#23273840' }, ticks: { callback: fmt } }
+        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
       }
     }
   });
@@ -723,7 +748,7 @@ function donutChart(id, labels, data, colors) {
     type: 'doughnut',
     data: {
       labels,
-      datasets: [{ data, backgroundColor: colors, borderColor: '#0d0f14', borderWidth: 3 }]
+      datasets: [{ data, backgroundColor: colors, borderColor: '#0b1118', borderWidth: 3 }]
     },
     options: {
       responsive: true,
@@ -761,17 +786,17 @@ function buildCharts() {
   lineChart('allWeeklyChart',
     weeks,
     [
-      { label: 'COK', data: Object.values(DATA.COK.weekly), color: '#e8c96d' },
-      { label: 'CK',  data: Object.values(DATA.CK.weekly),  color: '#5b8cff' },
-      { label: 'CLT', data: Object.values(DATA.CLT.weekly), color: '#4ecfa8' },
+      { label: 'COK', data: Object.values(DATA.COK.weekly), color: '#f0b847' },
+      { label: 'CK',  data: Object.values(DATA.CK.weekly),  color: '#5b9cf5' },
+      { label: 'CLT', data: Object.values(DATA.CLT.weekly), color: '#34d399' },
     ],
-    '#e8c96d'
+    '#f0b847'
   );
 
   donutChart('allDonutChart',
     ['COK', 'CK', 'CLT'],
     [2303002, 3747339, 1035883],
-    ['#e8c96d', '#5b8cff', '#4ecfa8']
+    ['#f0b847', '#5b9cf5', '#34d399']
   );
 
   // Combined daily
@@ -782,22 +807,22 @@ function buildCharts() {
     const l = DATA.CLT.daily.find(d=>d.date===date);
     return (c?.amount||0) + (k?.amount||0) + (l?.amount||0);
   };
-  lineChart('allDailyChart', allDates.map(d=>d.slice(5)), [{ label: 'All Branches', data: allDates.map(sum), color: '#5b8cff' }], '#5b8cff');
+  lineChart('allDailyChart', allDates.map(d=>d.slice(5)), [{ label: 'All Branches', data: allDates.map(sum), color: '#0a9e56' }], '#0a9e56');
 
   // --- COK ---
-  lineChart('cokDailyChart', DATA.COK.daily.map(d=>d.date.slice(5)), [{ label: 'COK Purchase', data: DATA.COK.daily.map(d=>d.amount), color: '#e8c96d' }], '#e8c96d');
-  barChart('cokWeeklyChart', weeks, Object.values(DATA.COK.weekly), '#e8c96d');
-  supplierBars('cokSuppliers', DATA.COK.suppliers, '#e8c96d');
+  lineChart('cokDailyChart', DATA.COK.daily.map(d=>d.date.slice(5)), [{ label: 'COK Purchase', data: DATA.COK.daily.map(d=>d.amount), color: '#f0b847' }], '#f0b847');
+  barChart('cokWeeklyChart', weeks, Object.values(DATA.COK.weekly), '#f0b847');
+  supplierBars('cokSuppliers', DATA.COK.suppliers, '#f0b847');
 
   // --- CK ---
-  lineChart('ckDailyChart', DATA.CK.daily.map(d=>d.date.slice(5)), [{ label: 'CK Purchase', data: DATA.CK.daily.map(d=>d.amount), color: '#5b8cff' }], '#5b8cff');
-  barChart('ckWeeklyChart', weeks, Object.values(DATA.CK.weekly), '#5b8cff');
-  supplierBars('ckSuppliers', DATA.CK.suppliers, '#5b8cff');
+  lineChart('ckDailyChart', DATA.CK.daily.map(d=>d.date.slice(5)), [{ label: 'CK Purchase', data: DATA.CK.daily.map(d=>d.amount), color: '#5b9cf5' }], '#5b9cf5');
+  barChart('ckWeeklyChart', weeks, Object.values(DATA.CK.weekly), '#5b9cf5');
+  supplierBars('ckSuppliers', DATA.CK.suppliers, '#5b9cf5');
   new Chart(document.getElementById('ckPayChart').getContext('2d'), {
     type: 'doughnut',
     data: {
       labels: ['Paid', 'Unpaid'],
-      datasets: [{ data: [403307, 3324209], backgroundColor: ['#4ecfa8aa', '#ff6b6baa'], borderColor: '#0d0f14', borderWidth: 3 }]
+      datasets: [{ data: [403307, 3324209], backgroundColor: ['#34d399aa', '#ef6461aa'], borderColor: '#0b1118', borderWidth: 3 }]
     },
     options: {
       cutout: '60%',
@@ -809,27 +834,27 @@ function buildCharts() {
   });
 
   // --- CLT ---
-  lineChart('cltDailyChart', DATA.CLT.daily.map(d=>d.date.slice(5)), [{ label: 'CLT Purchase', data: DATA.CLT.daily.map(d=>d.amount), color: '#4ecfa8' }], '#4ecfa8');
-  barChart('cltWeeklyChart', weeks, Object.values(DATA.CLT.weekly), '#4ecfa8');
-  supplierBars('cltSuppliers', DATA.CLT.suppliers, '#4ecfa8');
+  lineChart('cltDailyChart', DATA.CLT.daily.map(d=>d.date.slice(5)), [{ label: 'CLT Purchase', data: DATA.CLT.daily.map(d=>d.amount), color: '#34d399' }], '#34d399');
+  barChart('cltWeeklyChart', weeks, Object.values(DATA.CLT.weekly), '#34d399');
+  supplierBars('cltSuppliers', DATA.CLT.suppliers, '#34d399');
 
   // --- PvtLtd ---
   new Chart(document.getElementById('pvtRestChart').getContext('2d'), {
     type: 'bar',
     data: {
       labels: ['BYND St. Marks Rd', 'Beyondburg – Indiranagar'],
-      datasets: [{ data: [1745635, 1648171], backgroundColor: ['#ff6b6b88','#e8c96d88'], borderColor: ['#ff6b6b','#e8c96d'], borderWidth: 1, borderRadius: 4 }]
+      datasets: [{ data: [1745635, 1648171], backgroundColor: ['#ef646188','#f0b84788'], borderColor: ['#ef6461','#f0b847'], borderWidth: 1, borderRadius: 4 }]
     },
     options: {
       responsive: true,
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed.y) } } },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: '#23273840' }, ticks: { callback: fmt } }
+        y: { grid: { color: '#1f2e3c40' }, ticks: { callback: fmt } }
       }
     }
   });
-  barChart('pvtMonthChart', ['Jan 2026', 'Feb 2026'], [1866067, 1527739], '#ff6b6b');
+  barChart('pvtMonthChart', ['Jan 2026', 'Feb 2026'], [1866067, 1527739], '#ef6461');
 }
 
 // ============================================================
