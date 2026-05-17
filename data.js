@@ -3,7 +3,7 @@
 // ============================================================
 const CONFIG = {
   SPREADSHEET_ID: '1vvFjPb3BjFNu9swYlkIYKo_NI_QskOqdmuGaanXYZTM',
-  API_KEY: 'REDACTED_API_KEY',
+  API_KEY: (typeof SECRETS !== 'undefined' && SECRETS.API_KEY) || '',
   SHEETS: {
     COK: 'COK Purchase ',
     CK: 'CK Purchase',
