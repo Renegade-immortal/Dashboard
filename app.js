@@ -147,11 +147,11 @@ function renderOverview() {
   const all = [...cok,...ck,...clt];
   const tp = totalPurchase;
 
-  document.getElementById('allTotal').innerHTML = `<span class="rupee">₹</span>${fmt(tp(all)).slice(1)}`;
+  document.getElementById('allTotal').innerHTML = `<span class="rupee">₹</span>${fmtFull(tp(all)).slice(1)}`;
   document.getElementById('allTotalSub').textContent = `${invoiceCount(all)} invoices`;
-  document.getElementById('cokTotal').innerHTML = `<span class="rupee">₹</span>${fmt(tp(cok)).slice(1)}`;
-  document.getElementById('ckTotal').innerHTML = `<span class="rupee">₹</span>${fmt(tp(ck)).slice(1)}`;
-  document.getElementById('cltTotal').innerHTML = `<span class="rupee">₹</span>${fmt(tp(clt)).slice(1)}`;
+  document.getElementById('cokTotal').innerHTML = `<span class="rupee">₹</span>${fmtFull(tp(cok)).slice(1)}`;
+  document.getElementById('ckTotal').innerHTML = `<span class="rupee">₹</span>${fmtFull(tp(ck)).slice(1)}`;
+  document.getElementById('cltTotal').innerHTML = `<span class="rupee">₹</span>${fmtFull(tp(clt)).slice(1)}`;
 
   // Branch compare cards
   ['COK','CK','CLT'].forEach(b => {
@@ -159,10 +159,10 @@ function renderOverview() {
     const net = tp(rows) - totalReturns(rows);
     const ret = totalReturns(rows);
     const suppliers = aggSuppliers(rows, 1);
-    document.getElementById(`bc${b}Val`).textContent = '₹'+fmt(net).slice(1);
-    document.getElementById(`bc${b}Ret`).textContent = ret > 0 ? `Net (after ${fmt(ret)} returns)` : 'No returns recorded';
+    document.getElementById(`bc${b}Val`).textContent = fmtFull(net);
+    document.getElementById(`bc${b}Ret`).textContent = ret > 0 ? `Net (after ${fmtFull(ret)} returns)` : 'No returns recorded';
     document.getElementById(`bc${b}Top`).textContent = suppliers.length ? suppliers[0][0] : 'N/A';
-    document.getElementById(`bc${b}TopVal`).textContent = suppliers.length ? `${fmt(suppliers[0][1])} → ${((suppliers[0][1]/tp(rows))*100||0).toFixed(0)}% of total` : '';
+    document.getElementById(`bc${b}TopVal`).textContent = suppliers.length ? `${fmtFull(suppliers[0][1])} → ${((suppliers[0][1]/tp(rows))*100||0).toFixed(0)}% of total` : '';
   });
 
   // Weekly trend - all branches
@@ -188,18 +188,18 @@ function renderBranch(branch, color, accentClass) {
   const tp = totalPurchase(rows), tr = totalReturns(rows), net = tp - tr;
   const paid = totalPaid(rows), unpaid = totalUnpaid(rows);
 
-  document.getElementById(`${pre}Total2`).innerHTML = `<span class="rupee">₹</span>${fmt(tp).slice(1)}`;
+  document.getElementById(`${pre}Total2`).innerHTML = `<span class="rupee">₹</span>${fmtFull(tp).slice(1)}`;
   document.getElementById(`${pre}TotalSub`).textContent = `${invoiceCount(rows)} invoices`;
-  document.getElementById(`${pre}Net`).innerHTML = `<span class="rupee">₹</span>${fmt(net).slice(1)}`;
+  document.getElementById(`${pre}Net`).innerHTML = `<span class="rupee">₹</span>${fmtFull(net).slice(1)}`;
   document.getElementById(`${pre}NetSub`).innerHTML = tr > 0 ? `<span class="good">After ${fmtFull(tr)} returns</span>` : 'No returns';
 
   const kpi3El = document.getElementById(`${pre}Kpi3`);
   const kpi3Sub = document.getElementById(`${pre}Kpi3Sub`);
   if(paid > 0) {
-    kpi3El.innerHTML = `<span class="rupee">₹</span>${fmt(paid).slice(1)}`;
+    kpi3El.innerHTML = `<span class="rupee">₹</span>${fmtFull(paid).slice(1)}`;
     kpi3Sub.innerHTML = `<span class="good">${((paid/tp)*100).toFixed(1)}% settled</span>`;
   } else {
-    kpi3El.innerHTML = `<span class="rupee">₹</span>${fmt(tr).slice(1)}`;
+    kpi3El.innerHTML = `<span class="rupee">₹</span>${fmtFull(tr).slice(1)}`;
     kpi3Sub.textContent = `${((tr/tp)*100).toFixed(1)}% of gross`;
   }
 
@@ -210,7 +210,7 @@ function renderBranch(branch, color, accentClass) {
     kpi4El.innerHTML = `<span style="color:var(--accent4)">100%</span>`;
     kpi4Sub.innerHTML = `<span class="warn">All Outstanding</span>`;
   } else {
-    kpi4El.innerHTML = `<span class="rupee">₹</span>${fmt(unpaid).slice(1)}`;
+    kpi4El.innerHTML = `<span class="rupee">₹</span>${fmtFull(unpaid).slice(1)}`;
     kpi4Sub.innerHTML = `<span class="warn">${unpaidPct}% unpaid</span>`;
   }
 
@@ -236,13 +236,13 @@ function renderPvt() {
   const paid = rows.reduce((s,r)=>s+(r.paidAmount||0),0);
   const unpaid = total - paid;
 
-  document.getElementById('pvtTotal').innerHTML = `<span class="rupee">₹</span>${fmt(total).slice(1)}`;
+  document.getElementById('pvtTotal').innerHTML = `<span class="rupee">₹</span>${fmtFull(total).slice(1)}`;
   document.getElementById('pvtTotalSub').textContent = `${rows.length} invoices`;
-  document.getElementById('pvtPaid').innerHTML = `<span class="rupee" style="color:var(--muted2)">₹</span><span style="color:var(--accent3)">${fmt(paid).slice(1)}</span>`;
+  document.getElementById('pvtPaid').innerHTML = `<span class="rupee" style="color:var(--muted2)">₹</span><span style="color:var(--accent3)">${fmtFull(paid).slice(1)}</span>`;
   document.getElementById('pvtPaidSub').innerHTML = paid>0?`<span class="good">${fmtFull(paid)} recovered</span>`:'<span class="warn">₹0 recovered</span>';
-  document.getElementById('pvtOutstanding').innerHTML = `<span class="rupee">₹</span>${fmt(unpaid).slice(1)}`;
+  document.getElementById('pvtOutstanding').innerHTML = `<span class="rupee">₹</span>${fmtFull(unpaid).slice(1)}`;
   document.getElementById('pvtOutstandingSub').innerHTML = `<span class="warn">${total>0?((unpaid/total)*100).toFixed(0):0}% unpaid</span>`;
-  document.getElementById('pvtAvg').innerHTML = `<span class="rupee">₹</span>${rows.length>0?fmt(total/rows.length).slice(1):'0'}`;
+  document.getElementById('pvtAvg').innerHTML = `<span class="rupee">₹</span>${rows.length>0?fmtFull(total/rows.length).slice(1):'0'}`;
   document.getElementById('pvtAvgSub').textContent = `Across ${rows.length} bills`;
 
   // By restaurant
@@ -271,7 +271,7 @@ function renderPvt() {
       </div>`).join('') + `
       <div style="padding:14px 16px;background:var(--surface2);border-radius:8px;margin-top:8px;">
         <div style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">NOTE</div>
-        <div style="font-size:0.78rem;color:var(--muted2);">All Pvt Ltd bills are marked <span style="color:var(--accent4)">Unpaid</span>. ${fmt(unpaid)} in receivables pending.</div>
+        <div style="font-size:0.78rem;color:var(--muted2);">All Pvt Ltd bills are marked <span style="color:var(--accent4)">Unpaid</span>. ${fmtFull(unpaid)} in receivables pending.</div>
       </div>`;
   }
 }
@@ -333,9 +333,9 @@ function renderLedger() {
   const paidCount = txns.filter(t=>t.payment&&t.payment.toLowerCase()==='paid').length;
 
   document.getElementById('ledgerSummary').innerHTML = `
-    <div class="kpi accentB"><div class="kpi-label">Total Purchased</div><div class="kpi-value"><span class="rupee">₹</span>${fmt(totalP).slice(1)}</div><div class="kpi-sub">${txns.length} transactions</div></div>
-    <div class="kpi accent4"><div class="kpi-label">Returns</div><div class="kpi-value"><span class="rupee">₹</span>${fmt(totalR).slice(1)}</div><div class="kpi-sub">${txns.filter(t=>t.type==='Purchase Return').length} returns</div></div>
-    <div class="kpi accent3"><div class="kpi-label">Net Balance</div><div class="kpi-value"><span class="rupee">₹</span>${fmt(net).slice(1)}</div><div class="kpi-sub">After returns</div></div>
+    <div class="kpi accentB"><div class="kpi-label">Total Purchased</div><div class="kpi-value"><span class="rupee">₹</span>${fmtFull(totalP).slice(1)}</div><div class="kpi-sub">${txns.length} transactions</div></div>
+    <div class="kpi accent4"><div class="kpi-label">Returns</div><div class="kpi-value"><span class="rupee">₹</span>${fmtFull(totalR).slice(1)}</div><div class="kpi-sub">${txns.filter(t=>t.type==='Purchase Return').length} returns</div></div>
+    <div class="kpi accent3"><div class="kpi-label">Net Balance</div><div class="kpi-value"><span class="rupee">₹</span>${fmtFull(net).slice(1)}</div><div class="kpi-sub">After returns</div></div>
     <div class="kpi accent5"><div class="kpi-label">Payment Status</div><div class="kpi-value">${paidCount}/${txns.length}</div><div class="kpi-sub">${paidCount>0?'<span class="good">'+((paidCount/txns.length)*100).toFixed(0)+'% paid</span>':'<span class="warn">All unpaid</span>'}</div></div>`;
 
   // Table
